@@ -1,8 +1,11 @@
 #include "logger.hpp"
 
+using std::cout;
 using std::string;
 
-Logger::Logger(const string &fileName) { file.open(fileName); }
+Logger::Logger(const string &fileName, bool console) : console(console) {
+  file.open(fileName);
+}
 
 Logger::~Logger() {
   if (file.is_open())
@@ -10,9 +13,10 @@ Logger::~Logger() {
 }
 
 void Logger::log(const string &message) {
-  if (file.is_open()) {
-    file << message + "\n";
-  }
+  if (console)
+    cout << message << "\n";
+  if (file.is_open())
+    file << message << "\n";
 }
 
 void Logger::log(const std::string &filename, Logger::Type type) {

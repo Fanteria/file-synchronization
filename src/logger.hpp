@@ -2,11 +2,13 @@
 #define LOGGER_H_INCLUDED
 
 #include <fstream>
+#include <iostream>
 #include <string>
 
 class Logger {
 protected:
   const std::string types[3] = {"created", "copyed", "removed"};
+  const bool console;
   std::ofstream file;
 
 public:
@@ -17,7 +19,7 @@ public:
    *
    * @param name of file for loggeing
    */
-  Logger(const std::string &fileName = "log.log");
+  Logger(const std::string &fileName = "log.log", bool console = true);
 
   /*
    * @brief Destructor for logger.
