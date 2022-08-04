@@ -1,8 +1,8 @@
 #include <chrono>
 #include <filesystem>
-#include <iostream> // TODO remove
 #include <queue>
 #include <set>
+#include <stdexcept>
 #include <string>
 
 #include "logger.hpp"

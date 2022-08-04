@@ -1,6 +1,7 @@
 #include "synchronizer.hpp"
 
 namespace fs = std::filesystem;
+using std::invalid_argument;
 using std::queue, std::set;
 using std::string;
 
@@ -26,12 +27,17 @@ string Synchronizer::replicaPath(const std::filesystem::path &path) {
 Synchronizer::Synchronizer(const string &_source, const string &_replica,
                            const string &_logFile)
     : source(_source), replica(_replica), logger(_logFile) {
-  if (!(fs::exists(source) && fs::exists(replica))) {
-    // TODO
-  }
-  if (!(fs::is_directory(source) && fs::is_directory(replica))) {
-    // TODO
-  }
+  if (!fs::exists(source))
+    throw invalid_argument("Source folder must exist.");
+
+  if (!fs::exists(replica))
+    throw invalid_argument("Replica folder must exist.");
+
+  if (!fs::is_directory(source))
+    throw invalid_argument("Source must be directory.");
+
+  if (!fs::is_directory(replica))
+    throw invalid_argument("Replica must be directory.");
 }
 
 void Synchronizer::sync() {
