@@ -1,6 +1,5 @@
 CXX = g++
 CXXFLAGS = -g -Wall -Werror -pedantic --std=c++2a 
-CXXLINKFLAGS = -ltbb -lraw_r -lturbojpeg
 
 SRC = src
 BIN = bin
@@ -12,7 +11,7 @@ build: $(BIN)/$(TARGET)
 
 .PHONY: run
 run: $(BIN)/$(TARGET)
-	$(BIN)/$(TARGET) test/source test/replica log.log 5
+	$(BIN)/$(TARGET) test/source test/replica -l log.log -i 5
 
 .PHONY: debug
 debug: $(BIN)/$(TARGET)
