@@ -1,11 +1,27 @@
 #include "synchronizer.hpp"
 
 namespace fs = std::filesystem;
-using std::cout, std::endl; // TODO remove after testing
-using std::queue;
+using std::queue, std::set;
 using std::string;
 
-void Synchronizer::copyFile(const fs::path &path) { cout << path << endl; }
+void Synchronizer::copyFile(const fs::path &path) {
+  string rPath = replicaPath(path);
+  if (fs::copy_file(path, rPath, fs::copy_options::update_existing)) {
+    logger.log(rPath, Logger::COPY);
+  }
+}
+
+void Synchronizer::copyDir(const fs::path &dir) {
+  string rDir = replicaPath(dir);
+  if (fs::exists(rDir))
+    return;
+  logger.log(rDir, Logger::CREATE);
+  fs::create_directory(rDir);
+}
+
+string Synchronizer::replicaPath(const std::filesystem::path &path) {
+  return path.string().replace(0, source.string().size(), replica.string());
+}
 
 Synchronizer::Synchronizer(const string &_source, const string &_replica,
                            const string &_logFile)
@@ -18,7 +34,13 @@ Synchronizer::Synchronizer(const string &_source, const string &_replica,
   }
 }
 
-bool Synchronizer::run() {
+void Synchronizer::sync() {
+  set<string> rDirs{};
+  for (const auto &entry : fs::recursive_directory_iterator(replica)) {
+    if (!entry.is_directory())
+      rDirs.insert(entry.path().string());
+  }
+
   queue<fs::path> dirs{};
   dirs.push(source);
 
@@ -27,12 +49,16 @@ bool Synchronizer::run() {
     dir = dirs.front();
     for (const auto &entry : fs::directory_iterator(dir)) {
       if (entry.is_directory()) {
+        copyDir(entry.path());
         dirs.push(entry);
       } else {
         copyFile(entry.path());
+        rDirs.erase(replicaPath(entry.path()));
       }
     }
     dirs.pop();
   }
-  return false;
+
+  for (const auto &entry : rDirs)
+    fs::remove(entry);
 }

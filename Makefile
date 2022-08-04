@@ -12,7 +12,7 @@ build: $(BIN)/$(TARGET)
 
 .PHONY: run
 run: $(BIN)/$(TARGET)
-	$(BIN)/$(TARGET) test/source test/replica
+	$(BIN)/$(TARGET) test/source test/replica log.log 5
 
 .PHONY: debug
 debug: $(BIN)/$(TARGET)

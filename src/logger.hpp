@@ -7,7 +7,7 @@
 
 class Logger {
 protected:
-  const std::string types[3] = {"created", "copyed", "removed"};
+  const std::string types[3] = {"created", "copied", "removed"};
   const bool console;
   std::ofstream file;
 
