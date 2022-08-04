@@ -35,10 +35,13 @@ Synchronizer::Synchronizer(const string &_source, const string &_replica,
 }
 
 void Synchronizer::sync() {
+  set<string> rFiles{};
   set<string> rDirs{};
   for (const auto &entry : fs::recursive_directory_iterator(replica)) {
-    if (!entry.is_directory())
+    if (entry.is_directory())
       rDirs.insert(entry.path().string());
+    else
+      rFiles.insert(entry.path().string());
   }
 
   queue<fs::path> dirs{};
@@ -51,14 +54,17 @@ void Synchronizer::sync() {
       if (entry.is_directory()) {
         copyDir(entry.path());
         dirs.push(entry);
+        rDirs.erase(replicaPath(entry.path()));
       } else {
         copyFile(entry.path());
-        rDirs.erase(replicaPath(entry.path()));
+        rFiles.erase(replicaPath(entry.path()));
       }
     }
     dirs.pop();
   }
 
+  for (const auto &entry : rFiles)
+    fs::remove(entry);
   for (const auto &entry : rDirs)
     fs::remove(entry);
 }
