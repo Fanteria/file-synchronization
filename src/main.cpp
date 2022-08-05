@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
       "Options:\n"
       " -i, --interval\tPositive integer of iteration time in seconds.\n"
       " -l, --log\tName of file for logging.";
-  std::string logFile = "l.log";
+  std::string logFile = "log.log";
   std::string intervalStr = "60";
   std::string source{""};
   std::string replica{""};
